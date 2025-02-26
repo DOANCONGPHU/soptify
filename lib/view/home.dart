@@ -1,17 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:soptify/API/music_provider.dart';
 
 import '../list/popularArtist.dart';
 import '../list/topchart.dart';
 import '../list/trendingnow.dart';
 
+
+
+
+
 class HomeView extends StatefulWidget {
-  const HomeView({super.key});
+  const HomeView({super.key,});
 
   @override
   State<HomeView> createState() => _HomeViewState();
 }
 
 class _HomeViewState extends State<HomeView> {
+   @override
+  void initState() {
+    context.read<MusicProvider>().getTrendingMovies();
+    context.read<MusicProvider>().getPopularArtists();
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,60 +48,63 @@ class _HomeViewState extends State<HomeView> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Container(
-                    color: Colors.black.withOpacity(0.1),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              CircleAvatar(
-                                radius: 30,
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(30),
-                                  child: const Image(
-                                    image: AssetImage("assets/congphu.jpg"),
-                                    width: 60,
-                                    height: 60,
-                                    fit: BoxFit.cover,
+                  Positioned(
+                    top: 0,
+                    child: Container(
+                      color: Colors.black.withOpacity(0.1),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                CircleAvatar(
+                                  radius: 30,
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(30),
+                                    child: const Image(
+                                      image: AssetImage("assets/congphu.jpg"),
+                                      width: 60,
+                                      height: 60,
+                                      fit: BoxFit.cover,
+                                    ),
                                   ),
                                 ),
-                              ),
-                              const SizedBox(
-                                width: 10,
-                              ),
-                              const Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Text('Good Morning'),
-                                      SizedBox(
-                                        width: 5,
-                                      ),
-                                      Icon(Icons.sunny)
-                                    ],
-                                  ),
-                                  SizedBox(height: 8,),
-                                  Text("Đoàn Công Phú",style: TextStyle(fontWeight: FontWeight.bold),)
-                                ],
-                              ),
-                            ],
-                          ),
-                          const Row(
-                            children: [
-                              Icon(Icons.search_sharp),
-                              SizedBox(
-                                width: 10,
-                              ),
-                              Icon(Icons.notifications)
-                            ],
-                          )
-                        ],
+                                const SizedBox(
+                                  width: 10,
+                                ),
+                                const Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Text('Good Morning'),
+                                        SizedBox(
+                                          width: 5,
+                                        ),
+                                        Icon(Icons.sunny)
+                                      ],
+                                    ),
+                                    SizedBox(height: 8,),
+                                    Text("Đoàn Công Phú",style: TextStyle(fontWeight: FontWeight.bold),)
+                                  ],
+                                ),
+                              ],
+                            ),
+                            const Row(
+                              children: [
+                                Icon(Icons.search_sharp),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                Icon(Icons.notifications)
+                              ],
+                            )
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -112,39 +127,38 @@ class _HomeViewState extends State<HomeView> {
                       ],
                     ),
                   ),
-                  const SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    physics: BouncingScrollPhysics(),
-                    padding: EdgeInsets.all(20),
-                    child: Row(
-                      children: [
-                        TrendingNow(
-                          img: AssetImage("assets/ab1.jpg"),
-                          label: "Shadow of love-track",
+                  
+                  Row(                  
+                    children:<Widget>[
+                      Expanded(
+                        child: SizedBox(
+                          height: 250,
+                          child: Consumer<MusicProvider>(
+                            builder: (context, value, child) {
+                              if (value.trending == null) {
+                                return const CircularProgressIndicator();
+                              }
+                              return ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                itemBuilder: (context, index) {
+                                  final trend = value.trending!.results[index];
+
+                                  return TrendingNow(
+                                    img: NetworkImage('https://image.tmdb.org/t/p/w500${trend.posterPath}'), 
+                                    label: trend.title ,
+                                    overview: trend.overview,
+                                    id: trend.id
+                                    
+                                  );
+                                },
+                                // separatorBuilder: (context, index) => const Divider(),
+                                itemCount: value.trending!.results.length, 
+                              );
+                            },
+                          ),
                         ),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        TrendingNow(
-                          img: AssetImage("assets/thanhxuan.jpg"),
-                          label: "Sống cho hết đời thanh xuân",
-                        ),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        TrendingNow(
-                          img: AssetImage("assets/chualanh.jpg"),
-                          label: "Vết chữa lành",
-                        ),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        TrendingNow(
-                          img: AssetImage("assets/tun.jpg"),
-                          label: "Đắp chăn nằm nghe tun kể",
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -166,45 +180,38 @@ class _HomeViewState extends State<HomeView> {
                           ],
                         ),
                       ),
-                      const SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        physics: BouncingScrollPhysics(),
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 20,
-                        ),
-                        child: Row(
-                          children: [
-                            PopularArtist(
-                              image: AssetImage("assets/bile.jpg"),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: SizedBox(
+                              height: 170,
+                              child: Consumer<MusicProvider>(builder: (context, value, child) {
+                                if (value.popularArtists == null) {
+                                  return const CircularProgressIndicator();
+                                }
+                                return ListView.builder(
+                                  scrollDirection: Axis.horizontal,
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 20,
+                                  ),
+                                  itemBuilder: (BuildContext context, int index) {
+                                    final people = value.popularArtists!.results[index];
+                                    return PopularArtist(
+                                        image:  NetworkImage('https://image.tmdb.org/t/p/w500${people.profilePath}'),
+                                        label: people.name);
+                                  },
+                                  itemCount: value.popularArtists?.results.length,
+                                );
+                              }),
                             ),
-                            SizedBox(width: 16),
-                            PopularArtist(
-                              image: AssetImage("assets/stung.jpg"),
-                            ),
-                            SizedBox(width: 16),
-                            PopularArtist(
-                              image: AssetImage("assets/tlinh.jpg"),
-                            ),
-                            SizedBox(width: 16),
-                            PopularArtist(
-                              image: AssetImage("assets/mck.jpg"),
-                            ),
-                            SizedBox(width: 16),
-                            PopularArtist(
-                              image: AssetImage("assets/cr7.jpg"),
-                            ),
-                            SizedBox(width: 16),
-                            PopularArtist(
-                              image: AssetImage("assets/m10.jpg"),
-                            ),
-                          ],
-                        ),
+                          ),
+                        ],
                       )
                     ],
                   ),
                   const SizedBox(height: 32),
                   Padding(
-                    padding: EdgeInsets.fromLTRB(16, 16, 0, 16),
+                    padding: const EdgeInsets.fromLTRB(16, 16, 0, 16),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
@@ -221,7 +228,7 @@ class _HomeViewState extends State<HomeView> {
                             ),
                             SizedBox(width: 16),
                             TopChart(
-                              label: "New Album",
+                              label: "New Movies",
                               img: AssetImage("assets/newab.jpg"),
                             ),
                           ],
@@ -265,3 +272,6 @@ class _HomeViewState extends State<HomeView> {
     ));
   }
 }
+
+
+

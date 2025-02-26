@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
 
 class PopularArtist extends StatelessWidget {
-  final AssetImage image;
-
-  const PopularArtist ({super.key, required this.image});
-
-
+  final ImageProvider image;
+  final String label;
+  const PopularArtist ({super.key, required this.image, required this.label});
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 140,
+      width: 160,
       child: Column(
         children: [
           CircleAvatar(
@@ -24,9 +22,9 @@ class PopularArtist extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: 5,),
+          const SizedBox(height: 7,),
           Text(
-            "G Dragon, Son Tung, MCK, Tlinh",
+            label,
             style: Theme.of(context).textTheme.bodySmall,
             overflow: TextOverflow.ellipsis,
             maxLines: 2,

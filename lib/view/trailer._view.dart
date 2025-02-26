@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:soptify/list/topchart.dart';
+import 'package:soptify/view/play_trailer.dart';
 
 
 class AlbumView extends StatefulWidget {
   final ImageProvider image;
-  final String label;
-  const AlbumView({super.key, required this.image, required this.label});
-
+  final String label,overview;
+  final int id;
+  const AlbumView({super.key, required this.image, required this.label, required this.overview, required this.id});
   
   @override
   // ignore: library_private_types_in_public_api
@@ -50,6 +51,7 @@ class _AlbumViewState extends State<AlbumView> {
   @override
   Widget build(BuildContext context) {
     final cardSize = MediaQuery.of(context).size.width/6 ;
+
     return Scaffold(
       body: Stack(
         children: [
@@ -117,20 +119,39 @@ class _AlbumViewState extends State<AlbumView> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
-                                  "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum",
-                                  style: Theme.of(context).textTheme.bodySmall,
+                                GestureDetector(
+                                  onTap: () {
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (context) => OpenTrailer(
+                                          id: widget.id,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      const Icon(Icons.play_arrow),
+                                      Text(
+                                        " Trailer",
+                                        textAlign: TextAlign.center,
+                                        style:
+                                            Theme.of(context).textTheme.headlineSmall,
+                                      ),
+                                    ],
+                                  ),
                                 ),
                                 const SizedBox(height: 8),
                                 const Row(
                                   children: [
                                     Image(
-                                      image: AssetImage('assets/logo.png'),
+                                      image: AssetImage('assets/movie.jpg'),
                                       width: 32,
                                       height: 32,
                                     ),
                                     SizedBox(width: 8),
-                                    Text("Spotify")
+                                    Text("Movie")
                                   ],
                                 ),
                                 const SizedBox(height: 8),
@@ -159,13 +180,16 @@ class _AlbumViewState extends State<AlbumView> {
                     ),
                   ),
                   Container(
-                    padding: const EdgeInsets.all(16),
+                    padding: const EdgeInsets.fromLTRB(16, 25, 16, 16),
                     color: Colors.black,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                            "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s"),
+                         Text(widget.overview,
+                          softWrap: true,
+                          maxLines: 5,
+                          overflow: TextOverflow.ellipsis,
+                         ),                        
                         const SizedBox(height: 32),
                         Text(
                           "You might also like",
@@ -233,7 +257,6 @@ class _AlbumViewState extends State<AlbumView> {
               ),
             ),
           ),
-          // App bar
           Positioned(
               child: Container(
             child: AnimatedContainer(
@@ -246,7 +269,7 @@ class _AlbumViewState extends State<AlbumView> {
                 vertical: 8,
               ),
               child: SafeArea(
-                child: Container(
+                child: SizedBox(
                   height: 40,
                   width: MediaQuery.of(context).size.width,
                   child: Stack(
@@ -281,17 +304,26 @@ class _AlbumViewState extends State<AlbumView> {
                           alignment: Alignment.bottomRight,
                           children: [
                             Container(
-                              width: 64,
-                              height: 64,
+                              width: 60,
+                              height: 60,
                               alignment: Alignment.center,
                               decoration: const BoxDecoration(
                                 shape: BoxShape.circle,
                                 color: Color(0xff14D860),
                               ),
-                              child: const Icon(
-                                Icons.play_arrow,
-                                size: 38,
+                              child:  Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text('64',style: Theme.of(context).textTheme.headlineSmall,
+                                  
+                                  ),
+                                  const Icon(
+                                    Icons.percent,
+                                    size: 10,
+                                  ),
+                                ],
                               ),
+                              
                             ),
                             Container(
                               width: 24,
@@ -301,7 +333,7 @@ class _AlbumViewState extends State<AlbumView> {
                                 color: Colors.white,
                               ),
                               child: const Icon(
-                                Icons.shuffle,
+                                Icons.rate_review_outlined,
                                 color: Colors.black,
                                 size: 14,
                               ),
@@ -320,3 +352,4 @@ class _AlbumViewState extends State<AlbumView> {
     );
   }
 } 
+
